@@ -86,6 +86,9 @@ export default class Tourament extends Component {
                 }))
             }
         }
+        if(val === 'end'){
+          this.restartGame()
+        }
     }
 
     sendPayload = () => {
@@ -110,73 +113,53 @@ export default class Tourament extends Component {
     }
 
     checkWon = (newArray) => {
-        let i = 0;
-        for (let i = 0; i < newArray.length; i++) {
-            let X = 0, Y = 0;
-            for (let j = 0; j < newArray.length; j++) {
-                if (newArray[i][j] === 'X') {
-                    X++;
-                }
-                if (newArray[i][j] === 'T') {
-                    Y++;
-                }
-            }
-            if (X === 3) {
-                return 'X';
-            }
-            if (Y === 3) {
-                return 'T'
-            }
-        }
-        for (let j = 0; j < newArray.length; j++) {
-            let X = 0, Y = 0;
-            for (let i = 0; i < newArray.length; i++) {
-                if (newArray[i][j] === 'X') {
-                    X++;
-                }
-                if (newArray[i][j] === 'T') {
-                    Y++;
-                }
-            }
-            if (X === 3) {
-                return 'X';
-            }
-            if (Y === 3) {
-                return 'T'
-            }
-        }
-        let X = 0, Y = 0;
-        for (let i = 0; i < newArray.length; i++) {
+        let count = 0;
+        let arrayLen = newArray.length;
+        let leftCrossX = leftCrossT = rightCrossX = rightCrossT = 0;
+        for (let i = 0; i < arrayLen; i++) {
+            var rowX = rowT = colX = colT = 0;
             if (newArray[i][i] === 'X') {
-                X++;
+                leftCrossX++;
             }
             if (newArray[i][i] === 'T') {
-                Y++;
+                leftCrossT++;
+            }
+            if (newArray[i][arrayLen - i] === 'X') {
+                rightCrossX++;
+            }
+            if (newArray[i][arrayLen - i] === 'T') {
+                rightCrossT++;
+            }
+            for (let j = 0; j < arrayLen; j++) {
+                if (newArray[i][j] === 'X') {
+                    rowX ++;
+                }
+                if (newArray[j][i] === 'X') {
+                    colX++;
+                }
+                if (newArray[i][j] === 'T') {
+                    rowT++;
+                }
+                if (newArray[j][i] === 'T') {
+                    colT++;
+                }
+                if(newArray[i][j] === 'X' || newArray[i][j] === 'T'){
+                    count++;
+                }
             }
         }
-        if (X === 3) {
+        if (leftCrossX === 3 || rightCrossX === 3 || rowX === 3 || colX === 3) {
             return 'X';
         }
-        if (Y === 3) {
-            return 'T'
+        if (leftCrossT === 3 || rightCrossT === 3 || rowT === 3 || colT === 3) {
+            return 'T';
         }
-
-        for (let i = newArray.length - 1; i >= 0; i--) {
-            if (newArray[i][i] === 'X') {
-                X++;
-            }
-            if (newArray[i][i] === 'T') {
-                Y++;
-            }
-        }
-        if (X === 3) {
-            return 'X';
-        }
-        if (Y === 3) {
-            return 'T'
+        if(count === 9){
+            return 'end'
         }
         return '';
     }
+    
     restartGame = () => {
         this.setState(previousState => ({
             firstTurn: !this.state.firstTurn,
